@@ -50,9 +50,11 @@
   </div>
 
   <div class="empty-state" *ngIf="filteredTasks.length === 0">
-    <span class="material-icons empty-icon">assignment</span>
+    <div class="empty-icon-wrapper">
+      <span class="material-icons">assignment</span>
+    </div>
     <h3>No tasks yet</h3>
-    <p>Create your first task to get started.</p>
+    <p>Create your first task to see it tracked here.</p>
     <a routerLink="/tasks/new" class="btn-primary">
       <span class="material-icons">add</span> New Task
     </a>
