@@ -1,0 +1,13 @@
+.env
+! .env.example
+node_modules/
+target/
+.idea/
+.vscode/
+*.log
+dist/
+build/
+.angular/
+.mvn/
+**/application.yml
+! **/application.yml.example
