@@ -1,41 +1,47 @@
 <div class="page-container">
-  <mat-card class="form-card">
-    <mat-card-header>
-      <mat-card-title>{{ isEditMode ? 'Edit Task' : 'New Task' }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Title</mat-label>
-          <input matInput formControlName="title" />
-          <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required</mat-error>
-          <mat-error *ngIf="form.get('title')?.hasError('maxlength')">Max 100 characters</mat-error>
-        </mat-form-field>
+  <div class="form-card">
+    <div class="form-header">
+      <h2>{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h2>
+    </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" rows="4"></textarea>
-          <mat-error *ngIf="form.get('description')?.hasError('maxlength')">Max 500 characters</mat-error>
-        </mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="task-form">
+      <div class="form-group">
+        <label for="title">Title <span class="required">*</span></label>
+        <input id="title" type="text" formControlName="title" placeholder="What needs to be done?" />
+        <span class="error" *ngIf="form.get('title')?.touched && form.get('title')?.hasError('required')">
+          Title is required
+        </span>
+        <span class="error" *ngIf="form.get('title')?.touched && form.get('title')?.hasError('maxlength')">
+          Max 100 characters
+        </span>
+      </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="TO_DO">To Do</mat-option>
-            <mat-option value="IN_PROGRESS">In Progress</mat-option>
-            <mat-option value="DONE">Done</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description" rows="4" placeholder="Add a description..."></textarea>
+        <span class="error" *ngIf="form.get('description')?.touched && form.get('description')?.hasError('maxlength')">
+          Max 500 characters
+        </span>
+      </div>
 
-        <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          <option value="TO_DO">To Do</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="DONE">Done</option>
+        </select>
+      </div>
 
-        <div class="form-actions">
-          <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>
-          <button mat-raised-button color="primary" type="submit">
-            {{ isEditMode ? 'Update' : 'Create' }}
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      <div class="form-actions">
+        <button type="button" class="btn-outline" (click)="onCancel()">
+          <span class="material-icons">close</span> Cancel
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <span class="material-icons" *ngIf="!isLoading">{{ isEditMode ? 'save' : 'add_task' }}</span>
+          {{ isLoading ? 'Saving...' : (isEditMode ? 'Update Task' : 'Create Task') }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

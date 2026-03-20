@@ -1,31 +1,43 @@
 <div class="auth-container">
-  <mat-card class="auth-card">
-    <mat-card-header>
-      <mat-card-title>Register</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Username</mat-label>
-          <input matInput formControlName="username" />
-          <mat-error *ngIf="form.get('username')?.hasError('required')">Username is required</mat-error>
-          <mat-error *ngIf="form.get('username')?.hasError('minlength')">Min 3 characters</mat-error>
-        </mat-form-field>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="app-logo"> Taskify</div>
+      <p class="auth-subtitle">Create your account to get started.</p>
+    </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
-          <mat-error *ngIf="form.get('password')?.hasError('required')">Password is required</mat-error>
-          <mat-error *ngIf="form.get('password')?.hasError('minlength')">Min 6 characters</mat-error>
-        </mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" placeholder="Choose a username"
+          autocomplete="username" />
+        <span class="error" *ngIf="form.get('username')?.touched && form.get('username')?.hasError('required')">
+          Username is required
+        </span>
+        <span class="error" *ngIf="form.get('username')?.touched && form.get('username')?.hasError('minlength')">
+          Minimum 3 characters
+        </span>
+      </div>
 
-        <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Create a password"
+          autocomplete="new-password" />
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('required')">
+          Password is required
+        </span>
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+          Minimum 6 characters
+        </span>
+      </div>
 
-        <button mat-raised-button color="primary" type="submit" class="full-width">
-          Register
-        </button>
-      </form>
-      <p class="auth-link">Already have an account? <a routerLink="/login">Login</a></p>
-    </mat-card-content>
-  </mat-card>
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        <span class="material-icons" *ngIf="!isLoading">person_add</span>
+        {{ isLoading ? 'Creating account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
 </div>

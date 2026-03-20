@@ -10,7 +10,7 @@ export class TaskService {
   constructor(private http: HttpClient) {}
 
   getAllTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.apiUrl);
+    return this.http.get<Task[]>(`${this.apiUrl}?cb=${new Date().getTime()}`);
   }
 
   getTaskById(id: number): Observable<Task> {

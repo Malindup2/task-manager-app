@@ -1,68 +1,77 @@
-<div class="page-container">
-  <div class="page-header">
-    <h1>Task Manager</h1>
+<div class="dashboard">
+  <header class="dashboard-header">
+    <div class="app-logo"> Taskify</div>
     <div class="header-actions">
-      <mat-form-field appearance="outline" class="filter-select">
-        <mat-label>Filter by Status</mat-label>
-        <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="applyFilter()">
-          <mat-option value="ALL">All</mat-option>
-          <mat-option value="TO_DO">To Do</mat-option>
-          <mat-option value="IN_PROGRESS">In Progress</mat-option>
-          <mat-option value="DONE">Done</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button mat-raised-button color="primary" routerLink="/tasks/new">
-        <mat-icon>add</mat-icon> New Task
+      <button class="btn-outline" (click)="logout()">
+        <span class="material-icons">logout</span> Logout
       </button>
-      <button mat-stroked-button (click)="logout()">
-        <mat-icon>logout</mat-icon> Logout
-      </button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="filter-group">
+      <label for="statusFilter">Filter</label>
+      <select id="statusFilter" [(ngModel)]="selectedStatus" (ngModelChange)="applyFilter()">
+        <option value="ALL">All Tasks</option>
+        <option value="TO_DO">To Do</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="DONE">Done</option>
+      </select>
+    </div>
+    <a routerLink="/tasks/new" class="btn-primary">
+      <span class="material-icons">add</span> New Task
+    </a>
+  </div>
+
+  <div class="task-grid" *ngIf="filteredTasks.length > 0">
+    <div class="task-card" *ngFor="let task of filteredTasks">
+      <div class="task-card-header">
+        <h3 class="task-title">{{ task.title }}</h3>
+        <p class="task-desc">{{ task.description || 'No description' }}</p>
+      </div>
+      <span class="status-badge" [ngClass]="getStatusClass(task.status)">
+        {{ getStatusLabel(task.status) }}
+      </span>
+      <div class="task-meta">
+        <span class="task-date">{{ task.createdAt | date:'mediumDate' }}</span>
+      </div>
+      <div class="task-actions">
+        <a [routerLink]="['/tasks', task.id]" class="btn-icon" title="View">
+          <span class="material-icons">visibility</span>
+        </a>
+        <a [routerLink]="['/tasks/edit', task.id]" class="btn-icon edit" title="Edit">
+          <span class="material-icons">edit</span>
+        </a>
+        <button class="btn-icon delete" (click)="deleteTask(task.id!)" title="Delete">
+          <span class="material-icons">delete</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <table mat-table [dataSource]="filteredTasks" class="task-table">
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef>Title</th>
-      <td mat-cell *matCellDef="let task">{{ task.title }}</td>
-    </ng-container>
+  <div class="empty-state" *ngIf="filteredTasks.length === 0">
+    <span class="material-icons empty-icon">assignment</span>
+    <h3>No tasks yet</h3>
+    <p>Create your first task to get started.</p>
+    <a routerLink="/tasks/new" class="btn-primary">
+      <span class="material-icons">add</span> New Task
+    </a>
+  </div>
 
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>Description</th>
-      <td mat-cell *matCellDef="let task">{{ task.description || '—' }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let task">
-        <mat-chip [color]="getStatusColor(task.status)" selected>
-          {{ task.status }}
-        </mat-chip>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="createdAt">
-      <th mat-header-cell *matHeaderCellDef>Created</th>
-      <td mat-cell *matCellDef="let task">{{ task.createdAt | date:'short' }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let task">
-        <button mat-icon-button [routerLink]="['/tasks', task.id]" color="primary">
-          <mat-icon>visibility</mat-icon>
-        </button>
-        <button mat-icon-button [routerLink]="['/tasks/edit', task.id]" color="accent">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteTask(task.id!)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-
-  <p *ngIf="filteredTasks.length === 0" class="no-tasks">No tasks found.</p>
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="modal-overlay" *ngIf="taskToDelete !== null" (click)="cancelDelete()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-icon warning">
+        <span class="material-icons">warning_amber</span>
+      </div>
+      <div class="modal-content">
+        <h3>Delete Task</h3>
+        <p>Are you sure you want to delete this task? This action cannot be undone.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
 </div>

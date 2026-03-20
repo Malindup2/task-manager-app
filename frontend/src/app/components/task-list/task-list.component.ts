@@ -1,33 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
 import { AuthService } from '../../services/auth.service';
 import { Task } from '../../models/task';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule,
-            MatTableModule, MatButtonModule, MatSelectModule,
-            MatFormFieldModule, MatIconModule, MatChipsModule],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './task-list.component.html'
 })
 export class TaskListComponent implements OnInit {
+  private taskService = inject(TaskService);
+  private toastr = inject(ToastrService);
+  public authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
   selectedStatus = 'ALL';
-  displayedColumns = ['title', 'description', 'status', 'createdAt', 'actions'];
-
-  constructor(private taskService: TaskService,
-              public authService: AuthService) {}
+  taskToDelete: number | null = null;
 
   ngOnInit(): void {
     this.loadTasks();
@@ -36,36 +31,67 @@ export class TaskListComponent implements OnInit {
   loadTasks(): void {
     this.taskService.getAllTasks().subscribe({
       next: (data) => {
-        this.tasks = data;
+        this.tasks = data || [];
         this.applyFilter();
-      }
+        this.cdr.detectChanges();
+      },
+      error: () => this.toastr.error('Failed to load tasks', 'Error')
     });
   }
 
   applyFilter(): void {
-    this.filteredTasks = this.selectedStatus === 'ALL'
-      ? this.tasks
-      : this.tasks.filter(t => t.status === this.selectedStatus);
+    if (!this.selectedStatus || this.selectedStatus === 'ALL') {
+      this.filteredTasks = [...this.tasks];
+    } else {
+      this.filteredTasks = this.tasks.filter(t => t.status === this.selectedStatus);
+    }
+    this.cdr.detectChanges();
   }
 
   deleteTask(id: number): void {
-    if (confirm('Are you sure you want to delete this task?')) {
-      this.taskService.deleteTask(id).subscribe({
-        next: () => this.loadTasks()
+    this.taskToDelete = id;
+  }
+
+  confirmDelete(): void {
+    if (this.taskToDelete !== null) {
+      this.taskService.deleteTask(this.taskToDelete).subscribe({
+        next: () => {
+          this.toastr.success('Task deleted successfully', 'Deleted');
+          this.taskToDelete = null;
+          this.loadTasks();
+        },
+        error: () => {
+          this.toastr.error('Failed to delete task', 'Error');
+          this.taskToDelete = null;
+        }
       });
     }
   }
 
-  getStatusColor(status: string): string {
+  cancelDelete(): void {
+    this.taskToDelete = null;
+  }
+
+  getStatusClass(status: string): string {
     switch (status) {
-      case 'TO_DO': return 'primary';
-      case 'IN_PROGRESS': return 'accent';
-      case 'DONE': return 'warn';
+      case 'TO_DO': return 'status-todo';
+      case 'IN_PROGRESS': return 'status-progress';
+      case 'DONE': return 'status-done';
       default: return '';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'TO_DO': return 'To Do';
+      case 'IN_PROGRESS': return 'In Progress';
+      case 'DONE': return 'Done';
+      default: return status;
     }
   }
 
   logout(): void {
     this.authService.logout();
+    this.toastr.info('You have been logged out', 'Goodbye');
   }
 }

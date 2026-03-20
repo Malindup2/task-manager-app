@@ -1,33 +1,37 @@
 <div class="auth-container">
-  <mat-card class="auth-card">
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Username</mat-label>
-          <input matInput formControlName="username" />
-          <mat-error *ngIf="form.get('username')?.hasError('required')">
-            Username is required
-          </mat-error>
-        </mat-form-field>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="app-logo"> Taskify</div>
+      <p class="auth-subtitle">Welcome back! Sign in to your workspace.</p>
+    </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
-          <mat-error *ngIf="form.get('password')?.hasError('required')">
-            Password is required
-          </mat-error>
-        </mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" placeholder="Enter your username"
+          autocomplete="username" />
+        <span class="error" *ngIf="form.get('username')?.touched && form.get('username')?.hasError('required')">
+          Username is required
+        </span>
+      </div>
 
-        <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Enter your password"
+          autocomplete="current-password" />
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('required')">
+          Password is required
+        </span>
+      </div>
 
-        <button mat-raised-button color="primary" type="submit" class="full-width">
-          Login
-        </button>
-      </form>
-      <p class="auth-link">Don't have an account? <a routerLink="/register">Register</a></p>
-    </mat-card-content>
-  </mat-card>
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        <span class="material-icons" *ngIf="!isLoading">login</span>
+        {{ isLoading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Don't have an account? <a routerLink="/register">Create one</a>
+    </p>
+  </div>
 </div>

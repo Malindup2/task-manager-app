@@ -1,22 +1,30 @@
 <div class="page-container" *ngIf="task">
-  <mat-card class="detail-card">
-    <mat-card-header>
-      <mat-card-title>{{ task.title }}</mat-card-title>
-      <mat-card-subtitle>Created: {{ task.createdAt | date:'medium' }}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p><strong>Description:</strong> {{ task.description || 'No description provided.' }}</p>
-      <p><strong>Status:</strong>
-        <mat-chip selected color="primary">{{ task.status }}</mat-chip>
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-stroked-button (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon> Back
+  <div class="detail-card">
+    <div class="detail-header">
+      <h2>{{ task.title }}</h2>
+      <span class="status-badge" [ngClass]="getStatusClass(task.status)">
+        {{ getStatusLabel(task.status) }}
+      </span>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-field">
+        <label>Description</label>
+        <p>{{ task.description || 'No description provided.' }}</p>
+      </div>
+      <div class="detail-field">
+        <label>Created</label>
+        <p>{{ task.createdAt | date:'medium' }}</p>
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="btn-outline" (click)="goBack()">
+        <span class="material-icons">arrow_back</span> Back
       </button>
-      <button mat-raised-button color="accent" (click)="editTask()">
-        <mat-icon>edit</mat-icon> Edit
+      <button class="btn-primary" (click)="editTask()">
+        <span class="material-icons">edit</span> Edit Task
       </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </div>
 </div>

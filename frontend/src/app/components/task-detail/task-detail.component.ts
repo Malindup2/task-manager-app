@@ -1,31 +1,45 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-task-detail',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatChipsModule, MatIconModule],
+  imports: [CommonModule],
   templateUrl: './task-detail.component.html'
 })
 export class TaskDetailComponent implements OnInit {
-  task: Task | null = null;
+  private taskService = inject(TaskService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  constructor(private taskService: TaskService,
-              private route: ActivatedRoute,
-              private router: Router) {}
+  task: Task | null = null;
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.taskService.getTaskById(id).subscribe({
       next: (data) => this.task = data
     });
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'TO_DO': return 'status-todo';
+      case 'IN_PROGRESS': return 'status-progress';
+      case 'DONE': return 'status-done';
+      default: return '';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'TO_DO': return 'To Do';
+      case 'IN_PROGRESS': return 'In Progress';
+      case 'DONE': return 'Done';
+      default: return status;
+    }
   }
 
   goBack(): void {
