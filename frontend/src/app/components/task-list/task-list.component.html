@@ -1,0 +1,68 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Task Manager</h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="filter-select">
+        <mat-label>Filter by Status</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="applyFilter()">
+          <mat-option value="ALL">All</mat-option>
+          <mat-option value="TO_DO">To Do</mat-option>
+          <mat-option value="IN_PROGRESS">In Progress</mat-option>
+          <mat-option value="DONE">Done</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" routerLink="/tasks/new">
+        <mat-icon>add</mat-icon> New Task
+      </button>
+      <button mat-stroked-button (click)="logout()">
+        <mat-icon>logout</mat-icon> Logout
+      </button>
+    </div>
+  </div>
+
+  <table mat-table [dataSource]="filteredTasks" class="task-table">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Title</th>
+      <td mat-cell *matCellDef="let task">{{ task.title }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let task">{{ task.description || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let task">
+        <mat-chip [color]="getStatusColor(task.status)" selected>
+          {{ task.status }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef>Created</th>
+      <td mat-cell *matCellDef="let task">{{ task.createdAt | date:'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let task">
+        <button mat-icon-button [routerLink]="['/tasks', task.id]" color="primary">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button [routerLink]="['/tasks/edit', task.id]" color="accent">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteTask(task.id!)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <p *ngIf="filteredTasks.length === 0" class="no-tasks">No tasks found.</p>
+</div>
