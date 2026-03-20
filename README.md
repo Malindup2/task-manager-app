@@ -1,4 +1,6 @@
 # Task Manager App
+<img width="1581" height="701" alt="image" src="https://github.com/user-attachments/assets/15258527-e063-49e3-9f03-46d463a787df" />
+
 
 **Full Stack Application — Angular + Spring Boot + MySQL**
 
