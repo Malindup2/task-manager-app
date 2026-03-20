@@ -119,16 +119,9 @@ docker-compose up --build
 All task API endpoints are protected and require a valid JWT token.
 
 ### How to Authenticate
-1.  **Register** via `POST /api/auth/register`
-2.  **Login** via `POST /api/auth/login` — receive a JWT token
-3.  **Include the token** in all subsequent requests:
-    `Authorization: Bearer <your_jwt_token>`
-
-### Default Test Credentials
-| Field | Value |
-| :--- | :--- |
-| **Username** | `admin` |
-| **Password** | `admin123` |
+1.  **Register** a new account via the `/register` page (or API `POST /api/auth/register`).
+2.  **Login** with your new credentials via the `/login` page (or API `POST /api/auth/login`).
+3.  The Angular interceptor will automatically attach the received JWT to all subsequent requests.
 
 ---
 
