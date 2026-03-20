@@ -1,0 +1,22 @@
+<div class="page-container" *ngIf="task">
+  <mat-card class="detail-card">
+    <mat-card-header>
+      <mat-card-title>{{ task.title }}</mat-card-title>
+      <mat-card-subtitle>Created: {{ task.createdAt | date:'medium' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p><strong>Description:</strong> {{ task.description || 'No description provided.' }}</p>
+      <p><strong>Status:</strong>
+        <mat-chip selected color="primary">{{ task.status }}</mat-chip>
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Back
+      </button>
+      <button mat-raised-button color="accent" (click)="editTask()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
